@@ -52,3 +52,11 @@ export const getPicPreviewUrl = (PicPath) => {
   const encodedPath = encodeURIComponent(PicPath.replace(/\\/g, '/'))
   return `${API_BASE_ROOT}product/attachments/${encodedPath}`
 }
+
+export const searchShipmentSummaryList = (params) => {
+  return apiClient.post('/product/export/list', params)
+}
+
+export const submitShipmentExport = (params) => {
+  return apiClient.post('/product/export_submit_shipment', params)
+}

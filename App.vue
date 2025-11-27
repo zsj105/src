@@ -45,6 +45,11 @@
                 <span>产品列表</span>
               </el-menu-item>
 
+              <el-menu-item index="/products/export" v-if="checkMenuPermission('P005')">
+                <el-icon><Ship /></el-icon>
+                <span>外销出运</span>
+              </el-menu-item>
+
               <el-menu-item index="/upload" v-if="checkMenuPermission('P004')">
                 <el-icon><Upload /></el-icon>
                 <span>产品导入</span>
@@ -118,6 +123,7 @@ import {
   Lock,
   User,
   SwitchButton,
+  Ship,
 } from '@element-plus/icons-vue'
 import { hasPermission } from './services/utils.js'
 import { ElMessage } from 'element-plus'

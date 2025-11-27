@@ -33,6 +33,12 @@ const router = createRouter({
       meta: { title: '商品列表', requiredPermission: 'P003' },
     },
     {
+      path: '/products/export',
+      name: 'export',
+      component: () => import('../views/Product/ExportSearch.vue'),
+      meta: { title: '外销出运', requiredPermission: 'P005' },
+    },
+    {
       path: '/user/roles',
       name: 'user-roles',
       component: () => import('../views/User/RoleManagement.vue'),
