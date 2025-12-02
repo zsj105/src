@@ -63,7 +63,6 @@ const handleLogin = async () => {
 
   try {
     // 🎯 调用后端的登录 API
-    // 确保这里的路径 '/api/auth/login' 与您的后端路由配置一致
     const response = await axios.post('/api/auth/login', {
       username: loginForm.username,
       password: loginForm.password,
@@ -94,9 +93,6 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
-/* ------------------------------------------- */
-/* 🎨 保持上次您喜欢的五彩斑斓的样式和居中布局 */
-/* ------------------------------------------- */
 .login-page {
   display: flex;
   justify-content: center;
