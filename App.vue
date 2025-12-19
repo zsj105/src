@@ -50,6 +50,11 @@
                 <span>外销出运</span>
               </el-menu-item>
 
+              <el-menu-item index="/products/custproduct_profit" v-if="checkMenuPermission('P006')">
+                <el-icon><Ship /></el-icon>
+                <span>客户商品利润分析</span>
+              </el-menu-item>
+
               <el-menu-item index="/upload" v-if="checkMenuPermission('P004')">
                 <el-icon><Upload /></el-icon>
                 <span>产品导入</span>

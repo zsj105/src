@@ -22,7 +22,6 @@
             placeholder="请输入密码"
             :prefix-icon="Lock"
             show-password
-            @keyup.enter="handleLogin"
           />
         </el-form-item>
         <el-form-item>

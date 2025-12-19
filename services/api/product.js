@@ -13,7 +13,9 @@ export const searchBzs = (params) => {
 export const searchGdy = (params) => {
   return apiClient.post('/product/gdy_page_search', params)
 }
-
+export const searchYwy = (params) => {
+  return apiClient.post('/product/ywy_page_search', params)
+}
 // 对应 searchCgzt
 export const searchCgzt = (params) => {
   return apiClient.post('/product/cgzt_page_search', params)
@@ -59,4 +61,10 @@ export const searchShipmentSummaryList = (params) => {
 
 export const submitShipmentExport = (params) => {
   return apiClient.post('/product/export_submit_shipment', params)
+}
+export const custproduct_profit = (params) => {
+  return apiClient.post('/product/search_custproduct_profit', params)
+}
+export const submit_cust_productsExport = (params) => {
+  return apiClient.post('/product/export_cust_products', params)
 }

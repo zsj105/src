@@ -39,6 +39,12 @@ const router = createRouter({
       meta: { title: '外销出运', requiredPermission: 'P005' },
     },
     {
+      path: '/products/custproduct_profit',
+      name: 'custproduct_profit',
+      component: () => import('../views/Product/CustProductProfit.vue'),
+      meta: { title: '客户商品利润分析', requiredPermission: 'P006' },
+    },
+    {
       path: '/user/roles',
       name: 'user-roles',
       component: () => import('../views/User/RoleManagement.vue'),
