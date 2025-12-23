@@ -1,17 +1,14 @@
 <template>
-  <div class="product-search-container p-6 bg-gray-50 min-h-screen">
-    <!-- 1. 搜索条件卡片 -->
-    <el-card class="mb-6 shadow-lg">
+  <div class="page-container">
+    <el-card class="common-card shadow-lg">
       <template #header>
-        <div class="text-lg font-bold">客户商品利润分析 - 筛选条件</div>
+        <div>客户商品利润分析 - 筛选条件</div>
       </template>
 
-      <el-form :model="searchParams" label-position="top" class="search-form">
+      <el-form :model="searchParams" label-position="top" class="common-form">
         <el-row :gutter="20">
-          <!-- 动态渲染搜索字段 -->
           <el-col :span="6" v-for="field in searchFields" :key="field.key">
             <el-form-item :label="field.label">
-              <!-- A. 采购模式 (下拉选择) -->
               <template v-if="field.key === 'PurchaseMode'">
                 <el-select
                   v-model="searchParams.PurchaseMode"
@@ -26,7 +23,6 @@
                 </el-select>
               </template>
 
-              <!-- B. 客户简称 OR 业务员 (弹框多选) -->
               <template v-else-if="['brief_name', 'salename'].includes(field.key)">
                 <el-input
                   :model-value="getSelectedDisplay(field.key)"
@@ -43,7 +39,6 @@
                 </el-input>
               </template>
 
-              <!-- C. 其他普通文本输入 -->
               <template v-else>
                 <el-input
                   v-model="searchParams[field.key]"
@@ -55,7 +50,6 @@
             </el-form-item>
           </el-col>
 
-          <!-- 按钮区域 -->
           <el-col :span="12" class="flex items-end">
             <el-form-item label="&nbsp;" style="width: 100%">
               <div class="flex justify-end space-x-4 w-full">
@@ -75,13 +69,12 @@
       </el-form>
     </el-card>
 
-    <!-- 2. 结果展示卡片 -->
-    <el-card v-loading="isLoading" class="shadow-lg result-table-card">
+    <el-card v-loading="isLoading" class="common-card shadow-lg result-table-card">
       <template #header>
         <div class="flex justify-between items-center result-header-flex">
-          <span class="text-lg font-bold">
+          <span class="font-bold">
             分析结果
-            <span v-if="totalCount > 0" class="text-sm font-normal text-gray-500 ml-2">
+            <span v-if="totalCount > 0" class="text-sm font-normal text-gray-custom ml-2">
               (共 {{ totalCount }} 条记录)
             </span>
           </span>
@@ -107,6 +100,7 @@
         </div>
       </template>
       <el-alert v-if="errorMessage" :title="errorMessage" type="error" show-icon class="mb-4" />
+
       <el-table
         :data="products"
         v-loading="isLoading"
@@ -115,13 +109,7 @@
         border
         size="small"
         max-height="650"
-        :header-cell-style="{
-          backgroundColor: '#f5f7fa',
-          color: '#606266',
-          textAlign: 'center',
-          fontWeight: 'bold',
-        }"
-        class="custom-data-table"
+        class="common-table"
       >
         <el-table-column type="index" label="#" width="50" align="center" fixed />
         <el-table-column
@@ -176,7 +164,6 @@
       </div>
     </el-card>
 
-    <!-- 3. 通用选择弹框 (客户/业务员) -->
     <el-dialog
       v-model="dialogVisible"
       :title="'选择' + currentDialogTitle + ' (可多选)'"
@@ -185,27 +172,26 @@
       destroy-on-close
     >
       <div class="flex flex-col space-y-4">
-        <!-- 弹框内搜索 -->
         <el-input
           v-model="dialogQueryStr"
           :placeholder="'输入' + currentDialogTitle + '搜索...'"
           clearable
           @keyup.enter="fetchDialogData(1)"
           @clear="fetchDialogData(1)"
+          class="common-form"
         >
           <template #append>
             <el-button :icon="Search" @click="fetchDialogData(1)" />
           </template>
         </el-input>
 
-        <!-- 已选标签区 (增强体验) -->
         <div
           v-if="tempSelectedItems.length > 0"
-          class="selected-tags-container p-3 bg-blue-50 rounded border border-blue-100 shadow-sm"
+          class="selected-tags-container p-3 rounded border shadow-sm"
         >
           <div class="flex justify-between items-center mb-2">
-            <span class="text-xs text-blue-500 font-bold">已选 (跨页有效):</span>
-            <span class="text-xs text-gray-400">{{ tempSelectedItems.length }} 项</span>
+            <span class="text-xs font-bold label-text">已选 (跨页有效):</span>
+            <span class="text-xs count-text">{{ tempSelectedItems.length }} 项</span>
           </div>
           <div class="flex flex-wrap gap-2" style="max-height: 80px; overflow-y: auto">
             <el-tag
@@ -220,7 +206,6 @@
           </div>
         </div>
 
-        <!-- 数据表格 -->
         <el-table
           ref="dialogTableRef"
           :data="dialogDataList"
@@ -229,13 +214,12 @@
           height="350"
           border
           @selection-change="handleDialogSelectionChange"
+          class="common-table"
         >
-          <!-- reserve-selection 必须配合 row-key (这里用label作为key) -->
           <el-table-column type="selection" width="55" reserve-selection />
           <el-table-column prop="label" :label="currentDialogTitle" />
         </el-table>
 
-        <!-- 弹框内分页 -->
         <div class="flex justify-end mt-2">
           <el-pagination
             small
@@ -259,9 +243,8 @@
       </template>
     </el-dialog>
 
-    <!-- 图片预览 Dialog -->
     <el-dialog v-model="showImageDialog" title="预览" width="50%" align-center>
-      <div class="flex justify-center bg-gray-100 p-4">
+      <div class="flex justify-center p-4 preview-container">
         <img :src="currentImageUrl" style="max-height: 70vh; max-width: 100%" />
       </div>
     </el-dialog>
@@ -643,36 +626,55 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* 样式复用 */
-.product-search-container {
-  background-color: #f9fafb;
-}
-.product-search-container :deep(.el-card) {
-  border-radius: 12px;
-  border: none;
-}
-.search-form :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 1px #409eff inset !important;
-}
+/* 按钮 */
 .gradient-search-btn {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   border: none;
+  color: white;
+  border-radius: 8px;
 }
 .gradient-search-btn:hover {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
 }
+
+.export-btn {
+  color: white;
+}
+
+/* 利润颜色变量适配 */
 .text-red-500 {
-  color: #ef4444;
+  color: var(--el-color-danger);
+  font-weight: bold;
 }
 .text-green-600 {
-  color: #16a34a;
+  color: var(--el-color-success);
+  font-weight: bold;
 }
-/* 标签容器样式 */
+.text-gray-custom {
+  color: var(--el-text-color-secondary);
+}
+
+/* 标签区 */
 .selected-tags-container {
-  transition: all 0.3s;
+  background-color: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-lighter);
 }
-.selected-tags-container :deep(.el-tag) {
-  margin-right: 4px;
-  margin-bottom: 4px;
+.label-text {
+  color: var(--el-color-primary);
+}
+.count-text {
+  color: var(--el-text-color-secondary);
+}
+
+/* 图片预览 */
+.preview-container {
+  background-color: var(--el-fill-color-light);
+  border-radius: 8px;
+}
+
+/* 弹窗搜索框按钮适配 */
+.el-dialog :deep(.el-input-group__append button) {
+  background-color: var(--el-fill-color-light);
+  color: var(--el-text-color-primary);
 }
 </style>

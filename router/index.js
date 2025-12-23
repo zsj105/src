@@ -92,9 +92,11 @@ router.beforeEach((to, from, next) => {
     // 如果需要认证但用户未登录，跳转到登录页，并带上当前路由作为重定向参数
     const redirectUrl = encodeURIComponent(to.fullPath)
     next(`/login?redirect=${redirectUrl}`)
+    return
   } else if (to.name === 'login' && isAuthenticated) {
     // 如果用户已登录，但访问登录页，则重定向到首页
     next('/')
+    return
   }
   const requiredPermission = to.meta.requiredPermission
 
@@ -105,14 +107,17 @@ router.beforeEach((to, from, next) => {
     // 检查用户是否拥有此权限 (或是否为超级管理员 'ADMIN')
     if (userPermissions.includes(requiredPermission) || userPermissions.includes('admin')) {
       next() // 拥有权限，放行
+      return
     } else {
       // 权限不足
       ElMessage.error('权限不足，无法访问该页面。')
       next('/403')
+      return
     }
   } else {
     // 3. 正常放行：不需要认证或不需要权限的路由
     next()
+    return
   }
 })
 export default router

@@ -1,0 +1,83 @@
+/* src/assets/theme-custom.css */
+
+/* 1. 页面容器：统一背景和间距 */
+.page-container {
+  min-height: 100vh;
+  padding: 24px;
+  background-color: transparent;
+}
+
+/* 2. 通用卡片：适配暗黑背景和边框 */
+.common-card {
+  border-radius: 12px;
+  background-color: var(--el-bg-color-overlay) !important;
+  border: 1px solid var(--el-border-color-light) !important;
+  box-shadow: var(--el-box-shadow-light) !important;
+  color: var(--el-text-color-primary);
+  margin-bottom: 24px;
+}
+
+.common-card .el-card__header {
+  border-bottom: 1px solid var(--el-border-color-light);
+  padding-bottom: 12px;
+  color: var(--el-text-color-primary);
+  background-image: none !important; /* 强制去蓝线 */
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* 3. 通用表单元素：统一输入框背景 */
+.common-form .el-input__wrapper,
+.common-form .el-select__wrapper,
+.common-form .el-textarea__inner,
+.common-form .el-date-editor {
+  background-color: var(--el-fill-color-blank) !important;
+  box-shadow: 0 0 0 1px var(--el-border-color) inset !important;
+}
+
+.common-form .el-input__wrapper.is-focus,
+.common-form .el-select__wrapper.is-focused {
+  background-color: var(--el-bg-color-overlay) !important;
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;
+}
+
+/* 4. 通用表格：适配暗黑表格 */
+.common-table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--el-border-color-lighter);
+  background-color: transparent !important;
+  width: 100%;
+
+  /* 变量重写 */
+  --el-table-header-bg-color: var(--el-fill-color-light);
+  --el-table-header-text-color: var(--el-text-color-primary);
+  --el-table-text-color: var(--el-text-color-regular);
+  --el-table-tr-bg-color: transparent;
+  --el-table-row-hover-bg-color: var(--el-fill-color);
+  --el-table-border-color: var(--el-border-color-lighter);
+}
+
+/* 表头强制样式 */
+.common-table th.el-table__cell {
+  background-color: var(--el-fill-color-light) !important;
+  color: var(--el-text-color-primary) !important;
+  font-weight: bold;
+  border-bottom: 1px solid var(--el-border-color-lighter) !important;
+}
+
+/* 表格行强制样式 */
+.common-table .el-table__row {
+  background-color: var(--el-bg-color-overlay) !important;
+  color: var(--el-text-color-regular);
+}
+
+/* 斑马纹适配 */
+.common-table .el-table__row.el-table__row--striped td.el-table__cell {
+  background-color: var(--el-fill-color-lighter) !important;
+}
+
+/* 悬停效果 */
+.common-table .el-table__row:hover td.el-table__cell {
+  background-color: var(--el-fill-color) !important;
+}

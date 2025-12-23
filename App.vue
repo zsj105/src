@@ -1,5 +1,8 @@
 <template>
   <div class="app-root-container">
+    <!-- 🎄 引入圣诞场景 (雪花 + 树) -->
+    <ChristmasScene />
+
     <Transition name="layout-fade" mode="out-in">
       <div v-if="isFullScreen" key="full-screen-layout">
         <RouterView :key="$route.fullPath" />
@@ -21,8 +24,8 @@
                 <component :is="isCollapse ? DArrowRight : DArrowLeft" />
               </el-icon>
             </div>
-
-            <span v-if="!isCollapse" class="app-title"></span>
+            <!-- 修改：字体颜色使用变量，适应暗黑模式 -->
+            <span v-if="!isCollapse" class="app-title">圣诞主题</span>
           </div>
 
           <el-menu
@@ -30,34 +33,27 @@
             class="aside-menu"
             :router="true"
             background-color="transparent"
-            text-color="#303133"
-            active-text-color="#303133"
+            text-color="inherit"
+            active-text-color="inherit"
             :collapse="isCollapse"
           >
+            <!-- 注意：text-color="inherit" 让文字颜色跟随父级 css 变量 -->
             <el-sub-menu index="1">
               <template #title>
                 <el-icon><Tickets /></el-icon>
                 <span>产品管理</span>
               </template>
-
               <el-menu-item index="/products" v-if="checkMenuPermission('P003')">
-                <el-icon><Menu /></el-icon>
-                <span>产品列表</span>
+                <el-icon><Menu /></el-icon><span>产品列表</span>
               </el-menu-item>
-
               <el-menu-item index="/products/export" v-if="checkMenuPermission('P005')">
-                <el-icon><Ship /></el-icon>
-                <span>外销出运</span>
+                <el-icon><Ship /></el-icon><span>外销出运</span>
               </el-menu-item>
-
               <el-menu-item index="/products/custproduct_profit" v-if="checkMenuPermission('P006')">
-                <el-icon><Ship /></el-icon>
-                <span>客户商品利润分析</span>
+                <el-icon :color="'#67c23a'"><Coin /></el-icon><span>客户商品利润分析</span>
               </el-menu-item>
-
               <el-menu-item index="/upload" v-if="checkMenuPermission('P004')">
-                <el-icon><Upload /></el-icon>
-                <span>产品导入</span>
+                <el-icon><Upload /></el-icon><span>产品导入</span>
               </el-menu-item>
             </el-sub-menu>
 
@@ -66,15 +62,11 @@
                 <el-icon><Setting /></el-icon>
                 <span>用户管理</span>
               </template>
-
               <el-menu-item index="/user/roles" v-if="checkMenuPermission('P001')">
-                <el-icon><Lock /></el-icon>
-                <span>角色管理</span>
+                <el-icon><Lock /></el-icon><span>角色管理</span>
               </el-menu-item>
-
               <el-menu-item index="/user/auth" v-if="checkMenuPermission('P002')">
-                <el-icon><User /></el-icon>
-                <span>用户授权</span>
+                <el-icon><User /></el-icon><span>用户授权</span>
               </el-menu-item>
             </el-sub-menu>
           </el-menu>
@@ -93,9 +85,9 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>
-                      <el-icon><User /></el-icon>个人中心 (待开发)
-                    </el-dropdown-item>
+                    <el-dropdown-item
+                      ><el-icon><User /></el-icon>个人中心</el-dropdown-item
+                    >
                     <el-dropdown-item divided @click="handleLogout">
                       <el-icon><SwitchButton /></el-icon>退出登录
                     </el-dropdown-item>
@@ -113,79 +105,88 @@
     </Transition>
   </div>
 </template>
+
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import {
-  Tickets,
-  Menu,
-  Upload,
-  Setting,
-  Search,
-  Avatar,
-  DArrowRight,
-  DArrowLeft,
-  Lock,
-  User,
-  SwitchButton,
-  Ship,
-} from '@element-plus/icons-vue'
-import { hasPermission } from './services/utils.js'
 import { ElMessage } from 'element-plus'
+import { hasPermission } from './services/utils.js'
+import ChristmasScene from './components/ChristmasScene.vue' // 引入组件
+
 const route = useRoute()
 const router = useRouter()
 const isCollapse = ref(true)
+
 const activeRoute = computed(() => route.path)
 const currentRouteTitle = computed(() => route.meta?.title || '首页')
-const isFullScreen = computed(() => {
-  // 确保 route.meta 存在，防止读取 undefined 属性
-  return route.meta?.isFullScreenLayout
-})
-function checkMenuPermission(permissionCode) {
-  // 如果没有提供权限代码，则默认显示
-  if (!permissionCode) return true
-  return hasPermission(permissionCode)
+const isFullScreen = computed(() => route.meta?.isFullScreenLayout)
+
+function checkMenuPermission(code) {
+  if (!code) return true
+  return hasPermission(code)
 }
+
 const handleLogout = () => {
-  // 1. 清除认证信息 (Token 和权限)
   localStorage.removeItem('accessToken')
-
-  // 2. 提示用户
   ElMessage.success('退出登录成功！')
-
-  // 3. 重定向到登录页
   router.push('/login')
 }
+
+// 🌑 初始化：强制设置为暗黑模式
+onMounted(() => {
+  document.documentElement.classList.add('dark')
+})
 </script>
 
-<style scoped>
-/* 样式代码与您原文件保持一致 */
+<!-- App.vue 的 Style 部分 -->
+
+<!-- 👇 1. 全局样式 (不要加 scoped) -->
+<!-- 必须在这里定义变量，变量才能根据 html.dark 自动切换 -->
+<style>
 :root {
-  /* 侧边栏的蓝绿色渐变 (从浅到深，应用于整个 aside) */
+  /* 默认（暗黑模式）下的侧边栏背景：深蓝渐变 */
+  --sidebar-gradient: linear-gradient(180deg, #1f4e79 0%, #00ced1 100%);
+  --sidebar-text-color: #e0e0e0;
+}
+
+/* 亮色模式下的覆盖：浅蓝渐变 */
+html:not(.dark) :root {
   --sidebar-gradient: linear-gradient(180deg, #87cefa 0%, #00ced1 100%);
   --sidebar-text-color: #303133;
-  --sidebar-active-bg: #ffffff;
-  --main-bg: #f0f2f5;
-  --teal-color: #00ced1;
 }
 
-/* 🚀 新增：布局切换过渡样式 */
-.layout-fade-enter-active,
-.layout-fade-leave-active {
-  transition: opacity 0.3s ease;
+/* 全局重置，确保背景黑 */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--el-bg-color); /* 随 Element 变黑 */
+  color: var(--el-text-color-primary);
 }
 
-.layout-fade-enter-from,
-.layout-fade-leave-to {
-  opacity: 0;
+#app {
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+<!-- 👇 2. 组件局部样式 (保留 scoped) -->
+<style scoped>
+.app-root-container {
+  height: 100vh;
+  width: 100vw;
 }
 
 .main-layout {
+  height: 100%; /* 确保填满 */
   min-height: 100vh;
 }
 
 .main-aside {
-  background: var(--sidebar-gradient);
+  /* 这里引用上面定义的全局变量 */
+  background: var(--sidebar-gradient) !important;
   border-right: none;
   transition: width 0.3s;
   overflow-x: hidden;
@@ -198,98 +199,90 @@ const handleLogout = () => {
   align-items: center;
   padding: 0 20px;
   height: 60px;
+  /* 强制使用变量颜色 */
   color: var(--sidebar-text-color);
   gap: 10px;
-  justify-content: flex-start;
   font-weight: bold;
-  padding-top: 10px;
-  padding-bottom: 10px;
 }
 
 .collapse-toggle {
   cursor: pointer;
   padding: 5px;
   border-radius: 4px;
-  transition: background-color 0.2s;
   color: var(--sidebar-text-color);
+}
+.collapse-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .aside-menu {
   border-right: none;
   flex-grow: 1;
+  /* 覆盖 Element Menu 的默认颜色变量 */
+  --el-menu-text-color: var(--sidebar-text-color);
+  --el-menu-hover-text-color: #fff;
+  --el-menu-bg-color: transparent;
+  --el-menu-hover-bg-color: rgba(255, 255, 255, 0.1);
+  --el-menu-active-color: #fff;
 }
 
-.aside-menu :deep(.el-menu-item),
-.aside-menu :deep(.el-sub-menu__title) {
-  height: 48px;
-  line-height: 48px;
-  margin: 5px 10px;
-  padding: 0 10px !important;
-  border-radius: 6px;
-  color: var(--sidebar-text-color) !important;
-  --el-menu-icon-color: var(--sidebar-text-color);
-}
-
-.aside-menu :deep(.el-menu-item):hover,
-.aside-menu :deep(.el-sub-menu__title):hover {
-  background-color: rgba(255, 255, 255, 0.3) !important;
-}
-
+/* 选中菜单项样式 */
 .aside-menu :deep(.el-menu-item.is-active) {
-  background: var(--sidebar-active-bg) !important;
-  color: #303133 !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
   font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --el-menu-icon-color: #303133;
 }
 
-.aside-menu :deep(.el-sub-menu.is-active > .el-sub-menu__title) {
-  color: #303133 !important;
-  --el-menu-icon-color: #303133;
-}
-
-.aside-menu :deep(.el-menu--inline .el-menu-item) {
-  background-color: transparent !important;
-}
-
+/* 顶部 Header */
 .content-header {
-  background-color: #ffffff;
+  background-color: var(--el-bg-color-overlay); /* 跟随 Element 暗黑变量 */
   height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--el-border-color-light);
   padding: 0 20px;
-  color: #333;
+  color: var(--el-text-color-primary);
 }
+
 .header-title {
   font-size: 16px;
-  color: #999;
+  color: var(--el-text-color-secondary);
 }
 .current-path {
   font-weight: bold;
-  color: #333;
+  color: var(--el-text-color-primary);
 }
 .header-right {
-  color: #606266;
-  cursor: pointer;
+  color: var(--el-text-color-regular);
   display: flex;
   align-items: center;
 }
+
 .main-content {
-  background-color: var(--main-bg);
+  background-color: var(--el-bg-color); /* 这里的背景也必须跟随 Element */
   padding: 10px;
 }
+
 .header-avatar-icon {
   cursor: pointer;
-  padding: 5px; /* 增加点击区域 */
+  padding: 5px;
   border-radius: 50%;
-  transition: background-color 0.2s;
-  display: flex; /* 确保图标居中 */
+  display: flex;
   align-items: center;
+  color: var(--el-text-color-primary);
+}
+.header-avatar-icon:hover {
+  background-color: var(--el-fill-color);
 }
 
-.header-avatar-icon:hover {
-  background-color: #f0f2f5; /* 悬停背景色 */
+/* 过渡动画 */
+.layout-fade-enter-active,
+.layout-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.layout-fade-enter-from,
+.layout-fade-leave-to {
+  opacity: 0;
 }
 </style>

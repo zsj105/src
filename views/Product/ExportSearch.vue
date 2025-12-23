@@ -1,11 +1,16 @@
 <template>
-  <div class="shipment-summary-container p-6 bg-gray-50 min-h-screen">
-    <el-card class="mb-6 shadow-lg">
+  <div class="page-container">
+    <el-card class="common-card shadow-lg">
       <template #header>
-        <div class="text-lg font-bold">外销出运单查询条件</div>
+        <div>外销出运单查询条件</div>
       </template>
 
-      <el-form :model="searchParams" label-position="left" label-width="100px" class="search-form">
+      <el-form
+        :model="searchParams"
+        label-position="left"
+        label-width="100px"
+        class="common-form search-form"
+      >
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="起始时间">
@@ -50,10 +55,10 @@
       </el-form>
     </el-card>
 
-    <el-card class="result-table-card shadow-lg" v-loading="isSearching">
+    <el-card class="common-card shadow-lg" v-loading="isSearching">
       <template #header>
         <div class="card-header">
-          <span class="text-lg font-bold">查询结果 (共 {{ total }} 条)</span>
+          <span class="font-bold">查询结果 (共 {{ total }} 条)</span>
 
           <el-button
             type="success"
@@ -61,6 +66,7 @@
             @click="handleSubmitExport"
             :loading="isExporting"
             :disabled="total === 0 || isExporting"
+            class="export-btn"
           >
             {{ isExporting ? '导出中...' : '导出全部数据' }}
           </el-button>
@@ -79,10 +85,9 @@
       <el-table
         :data="tableData"
         border
-        class="custom-data-table"
         max-height="600"
         :empty-text="isSearching ? '正在查询数据...' : '暂无数据'"
-        :header-cell-style="{ backgroundColor: '#f5f7fa', color: '#606266', textAlign: 'center' }"
+        class="common-table"
       >
         <el-table-column type="index" label="序号" width="60" align="center" fixed="left" />
 
@@ -99,7 +104,7 @@
         />
       </el-table>
 
-      <div class="pagination-container mt-4 flex justify-center">
+      <div class="pagination-container mt-4">
         <el-pagination
           v-if="total > 0"
           @size-change="handlePageSizeChange"
@@ -114,7 +119,6 @@
     </el-card>
   </div>
 </template>
-
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Search, Refresh, Download } from '@element-plus/icons-vue'
@@ -538,35 +542,22 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* 保持样式不变 */
-.shipment-summary-container {
-  padding: 20px;
-}
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .search-form {
   padding: 0 10px;
 }
-.result-table-card :deep(.el-card__body) {
-  padding: 10px 20px 20px 20px;
+
+.export-btn {
+  color: white;
 }
-.custom-data-table {
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #ebeef5;
-}
-.custom-data-table :deep(.el-table__header-wrapper th) {
-  background-color: #eef1f6 !important;
-  color: #333 !important;
-  font-weight: bold;
-  padding: 10px 0;
-}
-.custom-data-table :deep(.el-table__row:hover) {
-  background-color: #f0f8ff !important;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(64, 158, 255, 0.15);
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
 }
 </style>
